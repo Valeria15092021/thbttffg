@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Знайомство з задачами (1 клас) & Ейдетика</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-bg: linear-gradient(135deg, #845ec2 0%, #d8d6a0 100%);
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --font-main: 'Fredoka', 'Nunito', sans-serif;
+      --pink: #ff6b81;
+      --purple: #845ec2;
+      --blue: #4b7bec;
+      --green: #2ed573;
+      --orange: #ff9f43;
+      --dark: #2f3542;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding: 10px;
+      color: var(--dark);
+    }
+
+    .header {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 10px 16px;
+      border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      margin-bottom: 15px;
+    }
+
+    .btn-back {
+      background: var(--pink);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-back:active { transform: scale(0.95); }
+
+    .score-badge {
+      background: #fff3bf;
+      color: #d97706;
+      border: 2px solid #f59e0b;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .screen {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .screen.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title {
+      font-size: 1.8rem;
+      color: white;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .menu-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .menu-card:active { transform: scale(0.97); }
+
+    .card-icon { font-size: 3rem; margin-bottom: 8px; }
+    .card-title { font-size: 1.4rem; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+    .card-desc { font-size: 0.95rem; color: #555; }
+
+    .game-box {
+      background: var(--card-bg);
+      width: 100%;
+      border-radius: 24px;
+      padding: 20px 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 420px;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .task-badge {
+      background: #e2e8f0;
+      color: var(--dark);
+      font-weight: 800;
+      padding: 5px 16px;
+      border-radius: 15px;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--green);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ЗАДАЧА ТЕКСТ ТА СТРУКТУРА */
+    .story-card {
+      background: #f8fafc;
+      border: 3px dashed #cbd5e1;
+      border-radius: 18px;
+      padding: 16px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .story-text {
+      font-size: 1.35rem;
+      color: var(--dark);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .story-question {
+      font-size: 1.25rem;
+      color: var(--purple);
+      font-weight: 800;
+      background: #f1f0fe;
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .interactive-area {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-grow: 1;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn-option {
+      background: #f1f5f9;
+      border: 3px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 14px 8px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--dark);
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 0 #cbd5e1;
+      transition: transform 0.1s;
+    }
+
+    .btn-option:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #cbd5e1;
+    }
+
+    /* ЕЙДЕТИКА: СТИКЕРИ */
+    .stickers-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 15px 0;
+      width: 100%;
+      min-height: 70px;
+      align-items: center;
+    }
+
+    .sticker-box {
+      width: 55px;
+      height: 55px;
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    }
+
+    .sticker-box.empty {
+      background: #f1f5f9;
+      border-style: dashed;
+    }
+
+    .timer-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--pink);
+      margin-bottom: 10px;
+    }
+
+    .sticker-picker {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-sticker {
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 8px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #cbd5e1;
+    }
+
+    .btn-sticker:active {
+      transform: translateY(2px);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 15px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-card {
+      background: white;
+      border-radius: 24px;
+      padding: 25px;
+      text-align: center;
+      width: 100%;
+      max-width: 340px;
+      animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popUp {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title { font-size: 1.8rem; color: var(--green); margin-bottom: 8px; }
+    .modal-stars { font-size: 3rem; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <button class="btn-back" onclick="goHome()">⬅ Меню</button>
+    <div class="score-badge">⭐ <span id="starCounter">0</span></div>
+  </div>
+
+  <div class="container">
+
+    <!-- SCREEN 1: MENU -->
+    <div id="screenMenu" class="screen active">
+      <h1 class="title">Обери Заняття 🚀</h1>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="startMathTasks()">
+          <div class="card-icon">📖🧮</div>
+          <div class="card-title">Знайомство з задачами</div>
+          <div class="card-desc">15 сюжетних задач з малюнками та виразами для 1 класу</div>
+        </div>
+        <div class="menu-card" onclick="startEidetics()">
+          <div class="card-icon">🧠✨</div>
+          <div class="card-title">Ейдетика (Запам'ятай 5 стикерів)</div>
+          <div class="card-desc">Запам'ятай 5 картинок в ряд за 5 секунд і відтвори!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: MATH TASKS -->
+    <div id="screenMath" class="screen">
+      <div class="game-box">
+        <div class="task-badge" id="mathBadge">Задача 1 з 15</div>
+        <div class="progress-bar"><div class="progress-fill" id="mathProgress"></div></div>
+        
+        <div class="story-card">
+          <div class="story-text" id="storyText">Умова прикліду...</div>
+          <div class="story-question" id="storyQuestion">Запитання...</div>
+        </div>
+
+        <div class="interactive-area">
+          <div style="font-weight:700; margin-bottom:8px; color:#64748b;">Обери правильне розв'язання:</div>
+          <div class="options-grid" id="mathOptions"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: EIDETICS -->
+    <div id="screenEidetic" class="screen">
+      <div class="game-box">
+        <div class="task-badge" id="eideticBadge">Раунд 1 з 10</div>
+        <div class="progress-bar"><div class="progress-fill" id="eideticProgress"></div></div>
+
+        <div class="timer-text" id="timerText">Запам'ятовуй: 5 сек ⏱️</div>
+        
+        <div class="stickers-row" id="stickersDisplay"></div>
+
+        <div class="interactive-area" id="eideticControls" style="display:none;">
+          <div style="font-weight:700; margin-bottom:5px;">Виклади стикери за пам'яттю:</div>
+          <div class="sticker-picker" id="stickerPicker"></div>
+          <button class="btn-back" style="margin-top:12px; background:var(--green); width:100%; justify-content:center;" onclick="resetStickerSelection()">🧹 Очистити</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VICTORY MODAL -->
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-card">
+      <div class="modal-title">Молодець! 🎉</div>
+      <div>Ти успішно пройшов усі завдання!</div>
+      <div class="modal-stars">⭐⭐⭐</div>
+      <button class="btn-back" style="margin: 0 auto; width: 100%; justify-content: center;" onclick="goHome()">У меню 🚀</button>
+    </div>
+  </div>
+
+  <script>
+    // Аудіо налаштування для мобільних
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function unlockAudio() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+    window.addEventListener('touchstart', unlockAudio, { once: true });
+    window.addEventListener('click', unlockAudio, { once: true });
+
+    function playTone(freq, duration) {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e){}
+    }
+
+    function playSound(type) {
+      if (type === 'correct') {
+        playTone(523.25, 0.12);
+        setTimeout(() => playTone(659.25, 0.15), 90);
+        setTimeout(() => playTone(783.99, 0.2), 180);
+      } else if (type === 'wrong') {
+        playTone(200, 0.15);
+        setTimeout(() => playTone(150, 0.2), 120);
+      } else if (type === 'win') {
+        playTone(400, 0.1);
+        setTimeout(() => playTone(500, 0.1), 80);
+        setTimeout(() => playTone(600, 0.1), 160);
+        setTimeout(() => playTone(800, 0.3), 240);
+      }
+    }
+
+    let totalStars = 0;
+
+    // --- МАТЕМАТИКА: ЗАДАЧІ ДЛЯ 1 КЛАСУ ---
+    const mathTasks = [
+      {
+        story: "🍎 На кущі висіло 5 червоних яблук і 2 зелені.",
+        question: "Скільки ВСЬОГО яблук на кущі?",
+        options: ["5 + 2 = 7", "5 - 2 = 3", "5 + 1 = 6"],
+        answer: "5 + 2 = 7"
+      },
+      {
+        story: "🐱 У кошику сиділо 6 сірих кошенят. 2 кошеняти вистрибнули.",
+        question: "Скільки кошенят ЗАЛИШИЛОСЯ у кошику?",
+        options: ["6 - 2 = 4", "6 + 2 = 8", "6 - 1 = 5"],
+        answer: "6 - 2 = 4"
+      },
+      {
+        story: "🐦 На гілочці сиділо 4 пташки. До них прилетіло ще 3 пташки.",
+        question: "Скільки пташок СТАЛО на гілочці?",
+        options: ["4 + 3 = 7", "4 - 3 = 1", "3 + 3 = 6"],
+        answer: "4 + 3 = 7"
+      },
+      {
+        story: "🎈 У дівчинки було 7 повітряних кульок. 3 кульки полетіли.",
+        question: "Скільки кульок ЗАЛИШИЛОСЯ у дівчинки?",
+        options: ["7 - 3 = 4", "7 + 3 = 10", "7 - 2 = 5"],
+        answer: "7 - 3 = 4"
+      },
+      {
+        story: "🚗 У гаражі стояло 3 машинки. Мама припаркувала ще 3 машинки.",
+        question: "Скільки машинок СТАЛО в гаражі?",
+        options: ["3 + 3 = 6", "3 - 3 = 0", "3 + 2 = 5"],
+        answer: "3 + 3 = 6"
+      },
+      {
+        story: "🍬 На тарілці лежало 8 цукерок. Діти з'їли 4 цукерки.",
+        question: "Скільки цукерок ЗАЛИШИЛОСЯ на тарілці?",
+        options: ["8 - 4 = 4", "8 + 4 = 12", "8 - 2 = 6"],
+        answer: "8 - 4 = 4"
+      },
+      {
+        story: "🐰 На галявині стрибало 5 зайчиків. Прибігло ще 3 зайчики.",
+        question: "Скільки ВСЬОГО зайчиків стало на галявині?",
+        options: ["5 + 3 = 8", "5 - 3 = 2", "5 + 2 = 7"],
+        answer: "5 + 3 = 8"
+      },
+      {
+        story: "🌸 У букеті було 9 квіточок. 3 квіточки подарували бабусі.",
+        question: "Скільки квіточок ЗАЛИШИЛОСЯ у букеті?",
+        options: ["9 - 3 = 6", "9 + 3 = 12", "9 - 4 = 5"],
+        answer: "9 - 3 = 6"
+      },
+      {
+        story: "✏️ У пеналі було 6 олівців. Хлопчик поклав ще 4 олівці.",
+        question: "Скільки олівців СТАЛО в пеналі?",
+        options: ["6 + 4 = 10", "6 - 4 = 2", "6 + 3 = 9"],
+        answer: "6 + 4 = 10"
+      },
+      {
+        story: "🦆 У ставку плавало 7 каченят. 2 каченяти вийшли на берег.",
+        question: "Скільки каченят ЗАЛИШИЛОСЯ плавати?",
+        options: ["7 - 2 = 5", "7 + 2 = 9", "7 - 3 = 4"],
+        answer: "7 - 2 = 5"
+      },
+      {
+        story: "🐟 У акваріумі плавало 4 золоті рибки та 4 червоні.",
+        question: "Скільки ВСЬОГО рибок плавало в акваріумі?",
+        options: ["4 + 4 = 8", "4 - 4 = 0", "4 + 3 = 7"],
+        answer: "4 + 4 = 8"
+      },
+      {
+        story: "🍌 На пальмі росло 9 бананів. Мавпочка зірвала 5 бананів.",
+        question: "Скільки бананів ЗАЛИШИЛОСЯ на пальмі?",
+        options: ["9 - 5 = 4", "9 + 5 = 14", "9 - 3 = 6"],
+        answer: "9 - 5 = 4"
+      },
+      {
+        story: "🧊 Малюк збудував башту з 5 кубиків. Потім додав ще 4 кубики.",
+        question: "З скількох кубиків СТАЛА башта?",
+        options: ["5 + 4 = 9", "5 - 4 = 1", "5 + 3 = 8"],
+        answer: "5 + 4 = 9"
+      },
+      {
+        story: "⭐️ На небі світилося 8 зірочок. 5 зірочок згасли за хмаркою.",
+        question: "Скільки зірочок ЗАЛИШИЛОСЯ світити?",
+        options: ["8 - 5 = 3", "8 + 5 = 13", "8 - 4 = 4"],
+        answer: "8 - 5 = 3"
+      },
+      {
+        story: "🐝 На квітці сиділо 2 бджілки. До них прилетіло ще 6 бджілок.",
+        question: "Скільки ВСЬОГО бджілок стало на квітці?",
+        options: ["2 + 6 = 8", "6 - 2 = 4", "2 + 5 = 7"],
+        answer: "2 + 6 = 8"
+      }
+    ];
+
+    let currentMathIdx = 0;
+
+    function startMathTasks() {
+      currentMathIdx = 0;
+      showScreen('screenMath');
+      loadMathTask();
+    }
+
+    function loadMathTask() {
+      const task = mathTasks[currentMathIdx];
+      const total = mathTasks.length;
+
+      document.getElementById('mathBadge').innerText = `Задача ${currentMathIdx + 1} з ${total}`;
+      document.getElementById('mathProgress').style.width = `${((currentMathIdx + 1) / total) * 100}%`;
+      document.getElementById('storyText').innerText = task.story;
+      document.getElementById('storyQuestion').innerText = task.question;
+
+      const container = document.getElementById('mathOptions');
+      container.innerHTML = '';
+
+      // Перемішуємо варіанти дій
+      const opts = [...task.options].sort(() => Math.random() - 0.5);
+
+      opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => checkMathAnswer(opt, task.answer);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkMathAnswer(selected, correct) {
+      if (selected === correct) {
+        playSound('correct');
+        currentMathIdx++;
+        if (currentMathIdx < mathTasks.length) {
+          loadMathTask();
+        } else {
+          playSound('win');
+          totalStars += 15;
+          document.getElementById('starCounter').innerText = totalStars;
+          document.getElementById('victoryModal').classList.add('active');
+        }
+      } else {
+        playSound('wrong');
+      }
+    }
+
+    // --- ЕЙДЕТИКА: 5 СТИКЕРІВ В РЯД ---
+    const allStickers = ['🦊', '🌸', '🐼', '🌻', '🐰', '🦁', '🐱', '🐸', '🦄', '🍎', '🍓', '🐝', '🎈'];
+    let currentEideticRound = 0;
+    const totalEideticRounds = 10;
+    let targetRow = [];
+    let userRow = [];
+    let timerInterval = null;
+
+    function startEidetics() {
+      currentEideticRound = 0;
+      showScreen('screenEidetic');
+      nextEideticRound();
+    }
+
+    function nextEideticRound() {
+      document.getElementById('eideticBadge').innerText = `Раунд ${currentEideticRound + 1} з ${totalEideticRounds}`;
+      document.getElementById('eideticProgress').style.width = `${((currentEideticRound + 1) / totalEideticRounds) * 100}%`;
+
+      // Генеруємо 5 випадкових неповторюваних стикерів
+      const shuffled = [...allStickers].sort(() => Math.random() - 0.5);
+      targetRow = shuffled.slice(0, 5);
+      userRow = [];
+
+      // Відображаємо стикери для запам'ятовування
+      const display = document.getElementById('stickersDisplay');
+      display.innerHTML = '';
+      targetRow.forEach(emoji => {
+        const box = document.createElement('div');
+        box.className = 'sticker-box';
+        box.innerText = emoji;
+        display.appendChild(box);
+      });
+
+      document.getElementById('eideticControls').style.display = 'none';
+      document.getElementById('timerText').style.display = 'block';
+
+      let timeLeft = 5;
+      document.getElementById('timerText').innerText = `Запам'ятовуй: ${timeLeft} сек ⏱️`;
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          document.getElementById('timerText').innerText = `Запам'ятовуй: ${timeLeft} сек ⏱️`;
+        } else {
+          clearInterval(timerInterval);
+          hideStickersAndShowControls();
+        }
+      }, 1000);
+    }
+
+    function hideStickersAndShowControls() {
+      document.getElementById('timerText').style.display = 'none';
+      
+      // Ховаємо стикери, залишаємо пусті клітинки
+      renderUserSlots();
+
+      // Малюємо палітру стикерів для вибору (включаючи ці 5 та ще додаткові для складності)
+      const pool = [...new Set([...targetRow, ...allStickers])].slice(0, 10).sort(() => Math.random() - 0.5);
+      const picker = document.getElementById('stickerPicker');
+      picker.innerHTML = '';
+      
+      pool.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sticker';
+        btn.innerText = emoji;
+        btn.onclick = () => selectSticker(emoji);
+        picker.appendChild(btn);
+      });
+
+      document.getElementById('eideticControls').style.display = 'flex';
+    }
+
+    function renderUserSlots() {
+      const display = document.getElementById('stickersDisplay');
+      display.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const box = document.createElement('div');
+        box.className = `sticker-box ${userRow[i] ? '' : 'empty'}`;
+        box.innerText = userRow[i] || '?';
+        display.appendChild(box);
+      }
+    }
+
+    function selectSticker(emoji) {
+      if (userRow.length < 5) {
+        userRow.push(emoji);
+        renderUserSlots();
+
+        if (userRow.length === 5) {
+          // Перевірка
+          let isCorrect = true;
+          for (let i = 0; i < 5; i++) {
+            if (userRow[i] !== targetRow[i]) {
+              isCorrect = false;
+              break;
+            }
+          }
+
+          if (isCorrect) {
+            playSound('correct');
+            currentEideticRound++;
+            setTimeout(() => {
+              if (currentEideticRound < totalEideticRounds) {
+                nextEideticRound();
+              } else {
+                playSound('win');
+                totalStars += 15;
+                document.getElementById('starCounter').innerText = totalStars;
+                document.getElementById('victoryModal').classList.add('active');
+              }
+            }, 600);
+          } else {
+            playSound('wrong');
+            setTimeout(() => {
+              userRow = [];
+              renderUserSlots();
+            }, 600);
+          }
+        }
+      }
+    }
+
+    function resetStickerSelection() {
+      userRow = [];
+      renderUserSlots();
+    }
+
+    // --- НАВІГАЦІЯ ---
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goHome() {
+      clearInterval(timerInterval);
+      document.getElementById('victoryModal').classList.remove('active');
+      showScreen('screenMenu');
+    }
+  </script>
+</body>
+</html>
